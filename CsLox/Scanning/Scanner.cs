@@ -29,7 +29,7 @@ namespace CsLox.Scanning
                 {"Else", TokenType.ELSE },
                 {"False", TokenType.FALSE },
                 {"For", TokenType.FOR },
-                {"Function", TokenType.FUN },
+                {"Function", TokenType.FUNCTION },
                 {"If", TokenType.IF },
                 {"Null", TokenType.NIL },
                 {"Or", TokenType.OR },

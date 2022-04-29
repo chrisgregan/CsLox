@@ -53,7 +53,7 @@ namespace CsLox.Parsing
             try
             {
                 if (Match(TokenType.CLASS)) return ClassDeclaration();
-                if (Match(TokenType.FUN)) return Function("function");
+                if (Match(TokenType.FUNCTION)) return Function("function");
                 if (Match(TokenType.VAR)) return VarDeclaration();
 
                 return Statement();
@@ -822,7 +822,7 @@ namespace CsLox.Parsing
                 switch (Peek().Type)
                 {
                     case TokenType.CLASS:
-                    case TokenType.FUN:
+                    case TokenType.FUNCTION:
                     case TokenType.VAR:
                     case TokenType.FOR:
                     case TokenType.IF:
