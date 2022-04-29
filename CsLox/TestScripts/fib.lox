@@ -1,17 +1,28 @@
-﻿var a = 0;
-var b = 1;
+﻿Var a = 0;
+Var b = 1;
 
-while (a < 10000) {
-  print a;
-  var temp = a;
-  a = b;
-  b = temp + b;
+Function Test()
+{
+	Print "testA";
+	Print "testB";
 }
 
-print "";
-print "";
+Test();
 
+If (a > b)
+{
+	Print "ok";
+}
 
-for (var i = 1; i < 10; i = i + 1) {
-	print i;
+While (a < 10) 
+{
+  Print a;
+  a = a + 1;
+}
+
+Print "";
+
+For (Var i = 0; i < 5; i = i + 1) 
+{
+  Print i;
 }

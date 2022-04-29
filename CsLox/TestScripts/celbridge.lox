@@ -1,0 +1,23 @@
+﻿@ -0,0 +1,22 @@
+﻿// Use End instead of { }
+// Fix For, While, Function to use End as well
+// Line endings mark end of statement
+// Literals are declared with a keyword, Number, String, Boolean, Array, Object
+// Left associativity is indicated with a =
+// Right associativity is indicated with a >
+// "Up"" associativity is indicated with a ^
+
+//Var				a
+//= Number		0
+//If				(a < 10)
+//	Print		"Less than"
+//Else
+//	Print		"Greater than"
+//End
+
+Var				a = 5;
+If				(a < 10)
+	Print		"Less than";
+Else
+	Print		"Greater than";
+End
