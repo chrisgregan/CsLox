@@ -1,13 +1,18 @@
 ﻿Var a = 0;
 Var b = 1;
 
-Function Test()
-Begin
-	Print "testA";
-	Print "testB";
+Class MyClass
+	Function TestA()
+		Print "testA";
+	End	
+	Function TestB()
+		Print "testB";
+	End	
 End
 
-Test();
+MyClass().TestA();
+
+//Test();
 
 If (a > b)
 Begin

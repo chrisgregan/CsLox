@@ -71,6 +71,7 @@ namespace CsLox.Parsing
         /// </summary>
         private Stmt ClassDeclaration()
         {
+
             Token name = Consume(TokenType.IDENTIFIER, "Expect class name");
 
             // Superclass
@@ -83,14 +84,15 @@ namespace CsLox.Parsing
 
 
             // Body
-            Consume(TokenType.BEGIN, "Expect '{' before class body");
+            // Consume(TokenType.BEGIN, "Expect '' before class body");
             List<Stmt.Function> methods = new List<Stmt.Function>();
             while (!Check(TokenType.END) && !IsAtEnd())
             {
+                Consume(TokenType.FUNCTION, "Expect 'Function' in class body.");
                 methods.Add((Stmt.Function)Function("method"));
             }
 
-            Consume(TokenType.END, "Expect '}' after class body.");
+            Consume(TokenType.END, "Expect 'End' after class body.");
 
             return new Stmt.Class(name, superclass, methods);
         }
@@ -124,7 +126,7 @@ namespace CsLox.Parsing
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
 
             // Body
-            Consume(TokenType.BEGIN, $"Expect '{{' before {kind} body.");
+            // Consume(TokenType.BEGIN, $"Expect 'Begin' before {kind} body.");
             List<Stmt> body = Block();
 
             return new Stmt.Function(name, parameters, body);
@@ -167,7 +169,6 @@ namespace CsLox.Parsing
             if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.BEGIN)) return new Stmt.Block(Block());
-
 
             return ExpressionStatement();
         }
@@ -223,7 +224,7 @@ namespace CsLox.Parsing
             {
 
                 // Body must be a block
-                Consume(TokenType.BEGIN, "Expect '{' after do.");
+                Consume(TokenType.BEGIN, "Expect 'Begin' after do.");
                 List<Stmt> body = Block();
 
                 // While
@@ -400,7 +401,7 @@ namespace CsLox.Parsing
                 statements.Add(Declaration());
             }
 
-            Consume(TokenType.END, "Expect '}' after block.");
+            Consume(TokenType.END, "Expect 'End' after block.");
             return statements;
 
         }
