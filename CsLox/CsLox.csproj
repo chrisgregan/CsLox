@@ -80,9 +80,6 @@
     <None Include="TestScripts\do-test.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestScripts\celbridge.lox">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TestScripts\fib.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

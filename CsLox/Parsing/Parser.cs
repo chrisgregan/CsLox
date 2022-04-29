@@ -156,6 +156,8 @@ namespace CsLox.Parsing
         /// <returns>The statement</returns>
         private Stmt Statement()
         {
+
+
             if (Match(TokenType.BREAK)) return BreakStatement();
             if (Match(TokenType.CONTINUE)) return ContinueStatement();
             if (Match(TokenType.DO)) return DoStatement();
@@ -373,18 +375,13 @@ namespace CsLox.Parsing
             Expr condition = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
 
-            Stmt then_branch = ThenBlock();
+            Stmt then_branch = Statement();
             Stmt else_branch = null;
 
             // Do we have an else?
             if (Match(TokenType.ELSE))
             {
-                else_branch = ElseBlock();
-            }
-
-            if (!Match(TokenType.END))
-            {
-                throw Error(Peek(), "Expect End after 'If'");
+                else_branch = Statement();
             }
 
             return new Stmt.If(condition, then_branch, else_branch);
@@ -408,40 +405,6 @@ namespace CsLox.Parsing
 
         }
 
-        private Stmt ThenBlock()
-        {
-            List<Stmt> statements = new List<Stmt>();
-
-            while (!Check(TokenType.ELSE) && !Check(TokenType.END) && !IsAtEnd())
-            {
-                statements.Add(Declaration());
-            }
-
-            if (!Check(TokenType.ELSE) && 
-                !Check(TokenType.END))
-            {
-                throw Error(Peek(), "Expect 'Else' or 'End' after If block.");
-            }
-
-            return new Stmt.Block(statements);
-        }
-
-        private Stmt ElseBlock()
-        {
-            List<Stmt> statements = new List<Stmt>();
-
-            while (!Check(TokenType.END) && !IsAtEnd())
-            {
-                statements.Add(Declaration());
-            }
-
-            if (!Check(TokenType.END))
-            {
-                throw Error(Peek(), "Expect 'End' after 'Else' block.");
-            }
-
-            return new Stmt.Block(statements);
-        }
 
         /// <summary>
         /// Parse a print statement
