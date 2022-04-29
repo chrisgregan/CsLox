@@ -8,7 +8,7 @@ namespace CsLox.Tokens
 {
     public enum TokenType
     {
-        LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+        LEFT_PAREN, RIGHT_PAREN, BEGIN, END,
         COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
         // One or two character tokens.

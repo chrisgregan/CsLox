@@ -39,7 +39,9 @@ namespace CsLox.Scanning
                 {"This", TokenType.THIS },
                 {"True", TokenType.TRUE },
                 {"Var", TokenType.VAR },
-                {"While", TokenType.WHILE }
+                {"While", TokenType.WHILE },
+                {"Begin", TokenType.BEGIN },
+                {"End", TokenType.END }
             };
 
         /// <summary>
@@ -83,8 +85,6 @@ namespace CsLox.Scanning
                 // 1 char lexemes
                 case '(': AddToken(TokenType.LEFT_PAREN); break;
                 case ')': AddToken(TokenType.RIGHT_PAREN); break;
-                case '{': AddToken(TokenType.LEFT_BRACE); break;
-                case '}': AddToken(TokenType.RIGHT_BRACE); break;
                 case ',': AddToken(TokenType.COMMA); break;
                 case '.': AddToken(TokenType.DOT); break;
                 case '-': AddToken(TokenType.MINUS); break;

@@ -83,14 +83,14 @@ namespace CsLox.Parsing
 
 
             // Body
-            Consume(TokenType.LEFT_BRACE, "Expect '{' before class body");
+            Consume(TokenType.BEGIN, "Expect '{' before class body");
             List<Stmt.Function> methods = new List<Stmt.Function>();
-            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+            while (!Check(TokenType.END) && !IsAtEnd())
             {
                 methods.Add((Stmt.Function)Function("method"));
             }
 
-            Consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+            Consume(TokenType.END, "Expect '}' after class body.");
 
             return new Stmt.Class(name, superclass, methods);
         }
@@ -124,7 +124,7 @@ namespace CsLox.Parsing
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
 
             // Body
-            Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+            Consume(TokenType.BEGIN, $"Expect '{{' before {kind} body.");
             List<Stmt> body = Block();
 
             return new Stmt.Function(name, parameters, body);
@@ -166,7 +166,7 @@ namespace CsLox.Parsing
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
-            if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
+            if (Match(TokenType.BEGIN)) return new Stmt.Block(Block());
 
 
             return ExpressionStatement();
@@ -223,7 +223,7 @@ namespace CsLox.Parsing
             {
 
                 // Body must be a block
-                Consume(TokenType.LEFT_BRACE, "Expect '{' after do.");
+                Consume(TokenType.BEGIN, "Expect '{' after do.");
                 List<Stmt> body = Block();
 
                 // While
@@ -395,12 +395,12 @@ namespace CsLox.Parsing
         {
             List<Stmt> statements = new List<Stmt>();
 
-            while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+            while (!Check(TokenType.END) && !IsAtEnd())
             {
                 statements.Add(Declaration());
             }
 
-            Consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+            Consume(TokenType.END, "Expect '}' after block.");
             return statements;
 
         }

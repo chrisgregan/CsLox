@@ -2,27 +2,27 @@
 Var b = 1;
 
 Function Test()
-{
+Begin
 	Print "testA";
 	Print "testB";
-}
+End
 
 Test();
 
 If (a > b)
-{
+Begin
 	Print "ok";
-}
+End
 
 While (a < 10) 
-{
+Begin
   Print a;
   a = a + 1;
-}
+End
 
 Print "";
 
 For (Var i = 0; i < 5; i = i + 1) 
-{
+Begin
   Print i;
-}
+End
