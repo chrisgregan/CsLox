@@ -1,33 +1,41 @@
 ﻿Var a = 0;
 Var b = 1;
 
-Class MyClass
-	Function TestA()
-		Print "testA";
+Class			MyClass
+	Function	TestA()
+		Print	"testA";
 	End	
-	Function TestB()
-		Print "testB";
+	Function	TestB()
+		Print	"testB";
 	End	
 End
 
 MyClass().TestA();
 
-//Test();
-
-If (a > b)
-Begin
-	Print "ok";
+If				(a > b)
+	a =			4;
+	Print		"ok";
 End
 
-While (a < 10) 
 Begin
+	Var			c = 8;
+	Print		c;
+
+	Begin
+		Var		d = c + 1;
+		Print	
+		d;
+	End
+
+End
+
+While			(a < 10) 
   Print a;
   a = a + 1;
 End
 
-Print "";
+Print			"";
 
-For (Var i = 0; i < 5; i = i + 1) 
-Begin
+For				(Var i = 0; i < 5; i = i + 1) 
   Print i;
 End

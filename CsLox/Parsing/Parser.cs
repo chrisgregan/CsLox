@@ -56,7 +56,7 @@ namespace CsLox.Parsing
                 if (Match(TokenType.FUNCTION)) return Function("function");
                 if (Match(TokenType.VAR)) return VarDeclaration();
 
-                return Statement();
+                return Statement(false);
             }
             catch (ParseErrorException)
             {
@@ -156,9 +156,10 @@ namespace CsLox.Parsing
         /// Parse a statement
         /// </summary>
         /// <returns>The statement</returns>
-        private Stmt Statement()
+        private Stmt Statement(bool beginBlock)
         {
-
+            if (beginBlock)
+                return new Stmt.Block(Block());
 
             if (Match(TokenType.BREAK)) return BreakStatement();
             if (Match(TokenType.CONTINUE)) return ContinueStatement();
@@ -168,7 +169,8 @@ namespace CsLox.Parsing
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
-            if (Match(TokenType.BEGIN)) return new Stmt.Block(Block());
+            if (Match(TokenType.BEGIN)) 
+                return new Stmt.Block(Block());
 
             return ExpressionStatement();
         }
@@ -266,7 +268,6 @@ namespace CsLox.Parsing
 
             try
             {
-
                 Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
 
                 // Initializer
@@ -306,7 +307,7 @@ namespace CsLox.Parsing
                 Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
 
                 // Body
-                Stmt body = Statement();
+                Stmt body = Statement(true);
 
                 // Convert to a while loop
                 if (increment != null)
@@ -334,9 +335,6 @@ namespace CsLox.Parsing
             {
                 _loop_depth--;
             }
-
-
-
         }
 
 
@@ -353,7 +351,7 @@ namespace CsLox.Parsing
                 Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while.");
                 Expr condition = Expression();
                 Consume(TokenType.RIGHT_PAREN, "Expect ')' after while condition.");
-                Stmt body = Statement();
+                Stmt body = Statement(true);
 
                 return new Stmt.While(condition, body);
             }
@@ -361,8 +359,6 @@ namespace CsLox.Parsing
             {
                 _loop_depth--;
             }
-
-
         }
 
 
@@ -376,13 +372,13 @@ namespace CsLox.Parsing
             Expr condition = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
 
-            Stmt then_branch = Statement();
+            Stmt then_branch = Statement(true);
             Stmt else_branch = null;
 
             // Do we have an else?
             if (Match(TokenType.ELSE))
             {
-                else_branch = Statement();
+                else_branch = Statement(true);
             }
 
             return new Stmt.If(condition, then_branch, else_branch);
