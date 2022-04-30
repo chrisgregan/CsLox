@@ -12,7 +12,7 @@ End
 
 MyClass().TestA();
 
-If				(a > b)
+If				(a < b)
 	a =			4;
 	Print		"ok";
 End
@@ -23,16 +23,19 @@ Begin
 
 	Begin
 		Var		d = c + 1;
-		Print	
-		d;
+		Print	d;
 	End
-
 End
 
 While			(a < 10) 
-  Print a;
   a = a + 1;
 End
+Print a;
+
+Do
+  a = a + 1;
+While			(a < 20)
+Print a;
 
 Print			"";
 

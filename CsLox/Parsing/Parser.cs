@@ -226,17 +226,17 @@ namespace CsLox.Parsing
             {
 
                 // Body must be a block
-                Consume(TokenType.BEGIN, "Expect 'Begin' after do.");
-                List<Stmt> body = Block();
+                //Consume(TokenType.BEGIN, "Expect 'Begin' after do.");
+                List<Stmt> body = DoBlock();
 
                 // While
-                Consume(TokenType.WHILE, "Expect 'while' after do loop body.");
+                Consume(TokenType.WHILE, "Expect 'While' after do loop body.");
 
                 // Condition
                 Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while.");
                 Expr condition = Expression();
                 Consume(TokenType.RIGHT_PAREN, "Expect ')' after while condition.");
-                Consume(TokenType.SEMICOLON, "Expect ';' after while condition.");
+                // Consume(TokenType.SEMICOLON, "Expect ';' after while condition.");
 
 
                 // Convert to while loop
@@ -399,7 +399,22 @@ namespace CsLox.Parsing
 
             Consume(TokenType.END, "Expect 'End' after block.");
             return statements;
+        }
 
+        private List<Stmt> DoBlock()
+        {
+            List<Stmt> statements = new List<Stmt>();
+
+            while (!Check(TokenType.WHILE) && !IsAtEnd())
+            {
+                statements.Add(Declaration());
+            }
+
+            if (!Check(TokenType.WHILE))
+            {
+                Error(Peek(), "Expect 'While' after 'Do' block.");
+            }
+            return statements;
         }
 
 
