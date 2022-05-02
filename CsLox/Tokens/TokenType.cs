@@ -21,7 +21,7 @@ namespace CsLox.Tokens
         IDENTIFIER, STRING, NUMBER,
 
         // Keywords.
-        AND, BREAK, CLASS, CONTINUE, DO, ELSE, FALSE, FUNCTION, FOR, IF, NIL, OR,
+        AND, BREAK, CLASS, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF, NIL, OR,
         PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, SET,
 
         EOF

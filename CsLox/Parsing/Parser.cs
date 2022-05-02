@@ -164,7 +164,6 @@ namespace CsLox.Parsing
             if (Match(TokenType.BREAK)) return BreakStatement();
             if (Match(TokenType.CONTINUE)) return ContinueStatement();
             if (Match(TokenType.DO)) return DoStatement();
-            if (Match(TokenType.FOR)) return ForStatement();
             if (Match(TokenType.IF)) return IfStatement();
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.RETURN)) return ReturnStatement();
@@ -464,15 +463,8 @@ namespace CsLox.Parsing
         {
             Expr expr = Or();
 
-            var prev2 = _tokens[_current - 2];
-
             if (Match(TokenType.EQUAL))
             {
-                if (prev2.Type != TokenType.SET)
-                {
-                    Error(prev2, "Must use 'Set' to assign to a variable");
-                }
-
                 Token equals = Previous();
                 Expr value = Assignment();
 
@@ -849,7 +841,6 @@ namespace CsLox.Parsing
                     case TokenType.CLASS:
                     case TokenType.FUNCTION:
                     case TokenType.VAR:
-                    case TokenType.FOR:
                     case TokenType.IF:
                     case TokenType.WHILE:
                     case TokenType.PRINT:

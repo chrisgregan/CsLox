@@ -2,11 +2,12 @@
 	Print		x + y;
 End
 
-DoStuff			99, 1;
+DoStuff			(99, 1);
 
-// Check keywords are preceded by a LineStart (not an EOL)
+// Todo: Check keywords are preceded by a LineStart (not an EOL)
 // Todo: Use explicit types instead of Var
 // Todo: Add Number, String, Boolean to declare literals & expressions
+// Todo: All arguments must be named
 Var a = 0;
 //a = 1;
 Set a = 2;

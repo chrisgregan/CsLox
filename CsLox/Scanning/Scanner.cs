@@ -28,7 +28,6 @@ namespace CsLox.Scanning
                 {"Do", TokenType.DO },
                 {"Else", TokenType.ELSE },
                 {"False", TokenType.FALSE },
-                {"For", TokenType.FOR },
                 {"Function", TokenType.FUNCTION },
                 {"If", TokenType.IF },
                 {"Null", TokenType.NIL },
