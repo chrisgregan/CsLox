@@ -2,16 +2,15 @@
 	Print		x + y;
 End
 
-DoStuff			(99, 1);
+Call			DoStuff(99, 1);
 
-// Todo: Check keywords are preceded by a LineStart (not an EOL)
-// Todo: Use explicit types instead of Var
-// Todo: Add Number, String, Boolean to declare literals & expressions
-// Todo: All arguments must be named
-Var a = 0;
-//a = 1;
-Set a = 2;
-Var b = 1;
+// Todo: Use explicit typing. Use Number, String, Boolean to declare variables and parameters
+// Todo: Check every line starts with a keyword, or is blank
+// Todo: All function arguments must be named
+
+Var				a;
+Set				a = 2;
+Var				b = 5;
 
 // Todo: Change inheritance to use : token
 // Todo: Change member variable declarations to be explicit, don't support methods. Rename to Struct.
@@ -27,11 +26,7 @@ End
 
 // Todo: Use Call keyword to invoke functions
 // Todo: Use > keyword to support right assignment
-MyClass().TestA();
-
-If				(a < b)
-	Print		"ok";
-End
+Call			MyClass().TestA();
 
 Begin
 	// Todo: Support left assignment using < token on next line
@@ -47,7 +42,10 @@ Begin
 End
 
 While			(a < 10) 
-  Set			a = a + 1;
+	If			(a < b)
+		Print	"ok";
+	End
+	Set			a = a + 1;
 End
 Print			a;
 
@@ -55,5 +53,3 @@ Do
   Set			a = a + 1;
 While			(a < 20)
 Print			a;
-
-Print			"";

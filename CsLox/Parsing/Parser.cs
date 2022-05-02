@@ -170,6 +170,7 @@ namespace CsLox.Parsing
             if (Match(TokenType.WHILE)) return WhileStatement();
             if (Match(TokenType.BEGIN)) return new Stmt.Block(Block());
             if (Match(TokenType.SET)) return SetStatement();
+            if (Match(TokenType.CALL)) return ExpressionStatement();
 
             return ExpressionStatement();
         }

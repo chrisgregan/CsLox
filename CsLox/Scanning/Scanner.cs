@@ -42,6 +42,7 @@ namespace CsLox.Scanning
                 {"Begin", TokenType.BEGIN },
                 {"End", TokenType.END },
                 {"Set", TokenType.SET },
+                {"Call", TokenType.CALL },
             };
 
         /// <summary>
