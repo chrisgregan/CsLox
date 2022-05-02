@@ -1,7 +1,21 @@
-﻿Var a = 0;
+﻿Function		DoStuff(x, y)
+	Print		x + y;
+End
+
+DoStuff			99, 1;
+
+// Check keywords are preceded by a LineStart (not an EOL)
+// Todo: Use explicit types instead of Var
+// Todo: Add Number, String, Boolean to declare literals & expressions
+Var a = 0;
+//a = 1;
+Set a = 2;
 Var b = 1;
 
+// Todo: Change inheritance to use : token
+// Todo: Change member variable declarations to be explicit, don't support methods. Rename to Struct.
 Class			MyClass
+	// Todo: Define params on separate lines using ^ operator
 	Function	TestA()
 		Print	"testA";
 	End	
@@ -10,35 +24,35 @@ Class			MyClass
 	End	
 End
 
+// Todo: Use Call keyword to invoke functions
+// Todo: Use > keyword to support right assignment
 MyClass().TestA();
 
 If				(a < b)
-	a =			4;
 	Print		"ok";
 End
 
 Begin
+	// Todo: Support left assignment using < token on next line
 	Var			c = 8;
 	Print		c;
 
 	Begin
-		Var		d = c + 1;
+		// Todo: Allow left assignment using < token
+		Var		d;
+		Set		d = c + 1;
 		Print	d;
 	End
 End
 
 While			(a < 10) 
-  a = a + 1;
+  Set			a = a + 1;
 End
-Print a;
+Print			a;
 
 Do
-  a = a + 1;
+  Set			a = a + 1;
 While			(a < 20)
-Print a;
+Print			a;
 
 Print			"";
-
-For				(Var i = 0; i < 5; i = i + 1) 
-  Print i;
-End

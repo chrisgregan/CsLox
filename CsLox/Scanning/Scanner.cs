@@ -41,7 +41,8 @@ namespace CsLox.Scanning
                 {"Var", TokenType.VAR },
                 {"While", TokenType.WHILE },
                 {"Begin", TokenType.BEGIN },
-                {"End", TokenType.END }
+                {"End", TokenType.END },
+                {"Set", TokenType.SET },
             };
 
         /// <summary>

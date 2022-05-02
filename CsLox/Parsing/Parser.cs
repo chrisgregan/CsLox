@@ -169,8 +169,8 @@ namespace CsLox.Parsing
             if (Match(TokenType.PRINT)) return PrintStatement();
             if (Match(TokenType.RETURN)) return ReturnStatement();
             if (Match(TokenType.WHILE)) return WhileStatement();
-            if (Match(TokenType.BEGIN)) 
-                return new Stmt.Block(Block());
+            if (Match(TokenType.BEGIN)) return new Stmt.Block(Block());
+            if (Match(TokenType.SET)) return SetStatement();
 
             return ExpressionStatement();
         }
@@ -440,6 +440,12 @@ namespace CsLox.Parsing
             return new Stmt.ExpressionStatement(expr);
         }
 
+        private Stmt SetStatement()
+        {
+            Expr expr = Expression();
+            Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+            return new Stmt.ExpressionStatement(expr);
+        }
 
         /// <summary>
         /// Parse an expression
@@ -458,8 +464,15 @@ namespace CsLox.Parsing
         {
             Expr expr = Or();
 
+            var prev2 = _tokens[_current - 2];
+
             if (Match(TokenType.EQUAL))
             {
+                if (prev2.Type != TokenType.SET)
+                {
+                    Error(prev2, "Must use 'Set' to assign to a variable");
+                }
+
                 Token equals = Previous();
                 Expr value = Assignment();
 
