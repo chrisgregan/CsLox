@@ -4,7 +4,9 @@ End
 
 Call			DoStuff(99, 1);
 
-// Todo: Use explicit typing. Use Number, String, Boolean to declare variables and parameters
+// Todo: Use Number, String, Boolean to explicity declare variables 
+// Todo: Associate a fixed typed with variables, add a type checking pass
+// Todo: Use type names to declare and call function parameters
 // Todo: Check every line starts with a keyword, or is blank
 // Todo: All function arguments must be named
 
