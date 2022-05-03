@@ -37,7 +37,6 @@ namespace CsLox.Scanning
                 {"Super", TokenType.SUPER },
                 {"This", TokenType.THIS },
                 {"True", TokenType.TRUE },
-                {"Var", TokenType.VAR },
                 {"While", TokenType.WHILE },
                 {"Begin", TokenType.BEGIN },
                 {"End", TokenType.END },

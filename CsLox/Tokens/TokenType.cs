@@ -22,7 +22,7 @@ namespace CsLox.Tokens
 
         // Keywords.
         AND, BREAK, CLASS, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF, NIL, OR,
-        PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, SET, CALL,
+        PRINT, RETURN, SUPER, THIS, TRUE, WHILE, SET, CALL,
 
         // Types
         NUMBER_TYPE, STRING_TYPE, BOOLEAN_TYPE,

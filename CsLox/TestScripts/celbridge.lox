@@ -13,3 +13,11 @@ Boolean			b = True;
 If				(b)
 	Print		"It's true";
 End
+
+Function		Gary(Number u, Number v)
+	Number		w = u * v;
+	Print		w;
+End
+
+Call			Gary(2,3);
+Print			"my dad is a wiener";

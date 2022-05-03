@@ -53,8 +53,7 @@ namespace CsLox.Parsing
             {
                 if (Match(TokenType.CLASS)) return ClassDeclaration();
                 if (Match(TokenType.FUNCTION)) return Function("function");
-                if (Match(TokenType.VAR) ||
-                    Match(TokenType.NUMBER_TYPE) ||
+                if (Match(TokenType.NUMBER_TYPE) ||
                     Match(TokenType.STRING_TYPE) ||
                     Match(TokenType.BOOLEAN_TYPE))
                 {
@@ -115,6 +114,7 @@ namespace CsLox.Parsing
             // Parameters
             Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
             List<Token> parameters = new List<Token>();
+            List<VarType> varTypes = new List<VarType>();
             if (!Check(TokenType.RIGHT_PAREN))
             {
                 do
@@ -122,6 +122,19 @@ namespace CsLox.Parsing
                     if (parameters.Count() >= 8)
                     {
                         Error(Peek(), "Cannot have more than 8 parameters");
+                    }
+
+                    if (Match(TokenType.NUMBER_TYPE, TokenType.STRING_TYPE, TokenType.BOOLEAN_TYPE))
+                    {
+                        if (!Enum.TryParse(Previous().Lexeme, out VarType varType))
+                        {
+                            Error(Previous(), "Expect 'Number', 'String' or 'Boolean' before parameter name.");
+                        }
+                        varTypes.Add(varType);
+                    }
+                    else
+                    {
+                        Error(Peek(), "Expect 'Number', 'String' or 'Boolean' before parameter name.");
                     }
 
                     parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
@@ -268,86 +281,6 @@ namespace CsLox.Parsing
                 _loop_depth--;
             }
         }
-
-        /// <summary>
-        /// Parse a for loop
-        /// </summary>
-        /// <returns>The statement</returns>
-        private Stmt ForStatement()
-        {
-            _loop_depth++;
-
-            try
-            {
-                Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
-
-                // Initializer
-
-                Stmt initializer;
-                if (Match(TokenType.SEMICOLON))
-                {
-                    // No initialiser
-                    initializer = null;
-                }
-                else if (Match(TokenType.VAR))
-                {
-                    // Its a variable decalration
-                    initializer = VarDeclaration();
-                }
-                else
-                {
-                    // Its an expression
-                    // This must be a _statement_
-                    initializer = ExpressionStatement();
-                }
-
-                // Condition
-                Expr condition = null;
-                if (!Check(TokenType.SEMICOLON))
-                {
-                    condition = Expression();
-                }
-                Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
-
-                // Increment
-                Expr increment = null;
-                if (!Check(TokenType.SEMICOLON))
-                {
-                    increment = Expression();
-                }
-                Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
-
-                // Body
-                Stmt body = Statement(true);
-
-                // Convert to a while loop
-                if (increment != null)
-                {
-                    body = new Stmt.Block(new[] { body, new Stmt.ExpressionStatement(increment) });
-                }
-
-                if (condition == null)
-                {
-                    // No condition, so set to true
-                    condition = new Expr.Literal(true);
-                }
-
-                body = new Stmt.While(condition, body);
-
-                if (initializer != null)
-                {
-                    body = new Stmt.Block(new[] { initializer, body });
-                }
-
-                return body;
-
-            }
-            finally
-            {
-                _loop_depth--;
-            }
-        }
-
 
         /// <summary>
         /// Parse while loop
@@ -852,7 +785,9 @@ namespace CsLox.Parsing
                 {
                     case TokenType.CLASS:
                     case TokenType.FUNCTION:
-                    case TokenType.VAR:
+                    case TokenType.NUMBER_TYPE:
+                    case TokenType.STRING_TYPE:
+                    case TokenType.BOOLEAN_TYPE:
                     case TokenType.IF:
                     case TokenType.WHILE:
                     case TokenType.PRINT:
