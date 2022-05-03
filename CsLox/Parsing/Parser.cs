@@ -114,7 +114,7 @@ namespace CsLox.Parsing
             // Parameters
             Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
             List<Token> parameters = new List<Token>();
-            List<VarType> varTypes = new List<VarType>();
+            List<VarType> parameterTypes = new List<VarType>();
             if (!Check(TokenType.RIGHT_PAREN))
             {
                 do
@@ -130,7 +130,7 @@ namespace CsLox.Parsing
                         {
                             Error(Previous(), "Expect 'Number', 'String' or 'Boolean' before parameter name.");
                         }
-                        varTypes.Add(varType);
+                        parameterTypes.Add(varType);
                     }
                     else
                     {
@@ -147,7 +147,7 @@ namespace CsLox.Parsing
             // Consume(TokenType.BEGIN, $"Expect 'Begin' before {kind} body.");
             List<Stmt> body = Block();
 
-            return new Stmt.Function(name, parameters, body);
+            return new Stmt.Function(name, parameters, parameterTypes, body);
 
         }
 

@@ -1,4 +1,6 @@
-﻿Number			a = 6;
+﻿// Todo: Match a line start token
+
+Number			a = 6;
 Number			b = 4;
 
 Number			c = a + b;
@@ -11,13 +13,18 @@ Print			x + " " + y;
 
 Boolean			b = True;
 If				(b)
-	Print		"It's true";
+  Print			"It's true";
 End
 
-Function		Gary(Number u, Number v)
-	Number		w = u * v;
-	Print		w;
+Class				Helga
+  Function			Gary(Number u, Number v)
+    // ^ Number		u
+    // ^ Number		v
+    // ^ ReturnType	Number
+	Number			w = u * v;
+	Print			w;
+	Print			"my dad is a wiener";
+  End
 End
 
-Call			Gary(2,3);
-Print			"my dad is a wiener";
+Call				Helga().Gary(2, 3);

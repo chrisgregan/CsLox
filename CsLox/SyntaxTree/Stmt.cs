@@ -93,16 +93,18 @@ namespace CsLox.SyntaxTree
 
         public class Function : Stmt
         {
-            public Function(Token name, IList<Token> parameters, IList<Stmt> body)
+            public Function(Token name, IList<Token> parameters, IList<VarType> parameterTypes, IList<Stmt> body)
             {
                 this.Name = name;
                 this.Parameters = parameters;
+                this.ParameterTypes = parameterTypes;
                 this.Body = body;
             }
 
             public IList<Stmt> Body { get; }
             public Token Name { get; }
             public IList<Token> Parameters { get; }
+            public IList<VarType> ParameterTypes { get; }
             public override T Accept<T>(IVisitor<T> visitor)
             {
                 return visitor.Visit(this);
