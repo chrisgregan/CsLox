@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace CsLox.Parsing
 {
-
     class Parser
     {
         private readonly IErrorHandler _error_handler;
@@ -54,7 +53,13 @@ namespace CsLox.Parsing
             {
                 if (Match(TokenType.CLASS)) return ClassDeclaration();
                 if (Match(TokenType.FUNCTION)) return Function("function");
-                if (Match(TokenType.VAR)) return VarDeclaration();
+                if (Match(TokenType.VAR) ||
+                    Match(TokenType.NUMBER_TYPE) ||
+                    Match(TokenType.STRING_TYPE) ||
+                    Match(TokenType.BOOLEAN_TYPE))
+                {
+                    return VarDeclaration();
+                }
 
                 return Statement(false);
             }
@@ -139,6 +144,12 @@ namespace CsLox.Parsing
         /// <returns></returns>
         private Stmt VarDeclaration()
         {
+            var varToken = Previous();
+            if (!Enum.TryParse(varToken.Lexeme, out VarType varType))
+            {
+                Error(varToken, $"Var declaration type '{varType}' is not valid.");
+            }
+
             Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
             // If there is a equals, the variable is initalized
@@ -149,7 +160,7 @@ namespace CsLox.Parsing
             }
 
             Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
-            return new Stmt.VarDeclaration(name, initializer);
+            return new Stmt.VarDeclaration(name, initializer, varType);
         }
 
         /// <summary>

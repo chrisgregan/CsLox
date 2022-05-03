@@ -43,6 +43,9 @@ namespace CsLox.Scanning
                 {"End", TokenType.END },
                 {"Set", TokenType.SET },
                 {"Call", TokenType.CALL },
+                {"Number", TokenType.NUMBER_TYPE },
+                {"String", TokenType.STRING_TYPE },
+                {"Boolean", TokenType.BOOLEAN_TYPE },
             };
 
         /// <summary>

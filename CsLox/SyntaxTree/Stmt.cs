@@ -155,19 +155,21 @@ namespace CsLox.SyntaxTree
             {
                 return visitor.Visit(this);
             }
-
         }
 
         public class VarDeclaration : Stmt
         {
-            public VarDeclaration(Token name, Expr initializer)
+            public VarDeclaration(Token name, Expr initializer, VarType varType)
             {
                 this.Name = name;
                 this.Initializer = initializer;
+                this.VarType = varType;
             }
 
             public Expr Initializer { get; }
             public Token Name { get; }
+            public VarType VarType { get; }
+
             public override T Accept<T>(IVisitor<T> visitor)
             {
                 return visitor.Visit(this);

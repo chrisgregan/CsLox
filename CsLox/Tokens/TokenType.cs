@@ -24,6 +24,19 @@ namespace CsLox.Tokens
         AND, BREAK, CLASS, CONTINUE, DO, ELSE, FALSE, FUNCTION, IF, NIL, OR,
         PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, SET, CALL,
 
+        // Types
+        NUMBER_TYPE, STRING_TYPE, BOOLEAN_TYPE,
+
         EOF
+    }
+
+    public enum VarType
+    {
+        Number,
+        String,
+        Boolean,
+        Object,
+        Function,
+        Var
     }
 }
