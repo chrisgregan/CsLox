@@ -50,6 +50,8 @@
     <Compile Include="ErrorHandlers\IErrorHandler.cs" />
     <Compile Include="Exceptions\BreakException.cs" />
     <Compile Include="Exceptions\ContinueException.cs" />
+    <None Include="GeneratedCSharp\Generated.lox" />
+    <Compile Include="GeneratedCSharp\Generated.cs" />
     <Compile Include="Runtime\LoxClass.cs" />
     <Compile Include="Runtime\LoxEnvironment.cs" />
     <Compile Include="Exceptions\ReturnException.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Runtime\NativeFunctions\Clock.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transpiler\Transpiler.cs" />
     <Compile Include="Runtime\Resolver.cs" />
     <Compile Include="Scanning\Scanner.cs" />
     <Compile Include="SyntaxTree\Expr.cs" />
@@ -72,6 +75,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="TestScripts\break-test.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestScripts\celsharp.lox">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestScripts\transpile.lox">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestScripts\class-test.lox">

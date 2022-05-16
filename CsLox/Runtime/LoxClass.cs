@@ -29,7 +29,7 @@ namespace CsLox.Runtime
             this._methods = methods;
         }
 
-        public object Call(Interpreter interpreter, IList<object> arguments)
+        public object Call(Interpreter interpreter, IDictionary<string, object> arguments)
         {
             LoxInstance instance = new LoxInstance(this);
 

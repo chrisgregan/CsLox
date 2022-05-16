@@ -24,7 +24,7 @@ namespace CsLox.Runtime
 
         }
 
-        public object Call(Interpreter interpreter, IList<object> arguments)
+        public object Call(Interpreter interpreter, IDictionary<string, object> arguments)
         {
             // Environment
             LoxEnvironment environment = new LoxEnvironment(_closure);
@@ -32,7 +32,10 @@ namespace CsLox.Runtime
             // Arguments
             for (int i = 0; i < _declaration.Parameters.Count(); i++)
             {
-                environment.Define(_declaration.Parameters[i].Lexeme, arguments[i]);
+                string parameterName = _declaration.Parameters[i].Lexeme;
+                object parameterValue = arguments[parameterName];
+
+                environment.Define(parameterName, parameterValue);
             }
 
             // Execute

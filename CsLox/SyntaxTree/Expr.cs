@@ -64,14 +64,14 @@ namespace CsLox.SyntaxTree
 
         public class Call : Expr
         {
-            public Call(Expr callee, Token paren, IList<Expr> arguments)
+            public Call(Expr callee, Token paren, IDictionary<Token, Expr> arguments)
             {
                 this.Callee = callee;
                 this.Paren = paren;
                 this.Arguments = arguments;
             }
 
-            public IList<Expr> Arguments { get; }
+            public IDictionary<Token, Expr> Arguments { get; }
             public Expr Callee { get; }
             public Token Paren { get; }
             public override T Accept<T>(IVisitor<T> visitor)

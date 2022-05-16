@@ -12,53 +12,86 @@ using CsLox.ErrorHandlers;
 
 namespace CsLox.Runtime
 {
-    class Resolver : Expr.IVisitor<object>, Stmt.IVisitor<object>
+    class Transpiler : Expr.IVisitor<object>, Stmt.IVisitor<object>
     {
         private readonly IErrorHandler _error_handler;
-        private readonly Interpreter _interpeter;
         private readonly StackList<HashMap<string, bool?>> _scopes = new StackList<HashMap<string, bool?>>();
         private readonly HashMap<string, string> _returnTypes = new HashMap<string, string>();
 
         private FunctionType _current_function = FunctionType.NONE;
         private ClassType _current_class = ClassType.NONE;
 
-        public Resolver(Interpreter interpreter, IErrorHandler error_handler)
+        private StringBuilder _code = new StringBuilder();
+        private int _indent;
+
+        public Transpiler(IErrorHandler error_handler)
         {
-            _interpeter = interpreter;
             _error_handler = error_handler;
         }
 
+        public string GetCode()
+        {
+            return _code.ToString();
+        }
+
         /// <summary>
-        /// Resolve the scope for a block
+        /// Transpile the scope for a block
         /// </summary>
         /// <param name="stmt">The block statement</param>
         public object Visit(Stmt.Block stmt)
         {
+            Indent();
+            _code.Append("{\n");
+            _indent++;
+
             BeginScope();
-            Resolve(stmt.Statements);
+            Transpile(stmt.Statements);
             EndScope();
+
+            _indent--;
+            Indent();
+            _code.Append("}\n");
+
             return null;
         }
 
         /// <summary>
-        /// Resolve a variable declaration
+        /// Transpile a variable declaration
         /// </summary>
         /// <param name="stmt"></param>
         /// <returns></returns>
         public object Visit(Stmt.VarDeclaration stmt)
         {
-            Declare(stmt.Name);
+            switch (stmt.VarType)
+            {
+                case VarType.Number:
+                    _code.Append("double");
+                    break;
+                case VarType.String:
+                    _code.Append("string");
+                    break;
+            }
+
+            _code.Append($" {stmt.Name.Lexeme}");
+
+            // Declare(stmt.Name);
             if (stmt.Initializer != null)
             {
-                Resolve(stmt.Initializer);
+                _code.Append($" = ");
+                Transpile(stmt.Initializer);
             }
-            Define(stmt.Name);
+
+            // Todo: Should this always end with a ;?
+            _code.Append(";\n");
+
+            //Define(stmt.Name);
+
             return null;
 
         }
 
         /// <summary>
-        /// Resolve a variable expression
+        /// Transpile a variable expression
         /// </summary>
         /// <param name="expr">The expression</param>
         public object Visit(Expr.Variable expr)
@@ -67,28 +100,32 @@ namespace CsLox.Runtime
             {
                 _error_handler.Error(expr.Name, "Cannot read local variable in its own initializer.");
             }
-            ResolveLocal(expr, expr.Name);
+            TranspileLocal(expr, expr.Name);
 
             return null;
 
         }
 
-
         /// <summary>
-        /// Resolve a assignement
+        /// Transpile a assignement
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Assign expr)
         {
-            Resolve(expr.value);
-            ResolveLocal(expr, expr.Name);
+            _code.Append($"{expr.Name.Lexeme} = ");
+
+            Transpile(expr.value);
+
+            _code.Append(";\n");
+
+            //TranspileLocal(expr, expr.Name);
             return null;
 
         }
 
         /// <summary>
-        /// Resolve a function declaration
+        /// Transpile a function declaration
         /// </summary>
         /// <param name="stmt">The statement</param>
         public object Visit(Stmt.Function stmt)
@@ -99,55 +136,63 @@ namespace CsLox.Runtime
 
             if (stmt.ReturnType != null)
             {
-                // Todo: Figure out how to record the return type for the function - maybe a separate dictionary?
+                // Todo: Figure out how to record the return type in the function's scope
             }
 
-            ResolveFunction(stmt, FunctionType.FUNCTION);
+            TranspileFunction(stmt, FunctionType.FUNCTION);
             return null;
         }
 
         /// <summary>
-        /// Resolve a statement expression
+        /// Transpile a statement expression
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
         public object Visit(Stmt.ExpressionStatement stmt)
         {
-            Resolve(stmt.Expression);
+            Transpile(stmt.Expression);
             return null;
         }
 
         /// <summary>
-        /// Resolve an if statement
+        /// Transpile an if statement
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
         public object Visit(Stmt.If stmt)
         {
-            Resolve(stmt.Condition);
-            Resolve(stmt.ThenBranch);
+            _code.Append("if (");
+            Transpile(stmt.Condition);
+            _code.Append(")\n");
+
+            Transpile(stmt.ThenBranch);
             if (stmt.ElseBranch != null)
             {
-                Resolve(stmt.ElseBranch);
+                _code.Append("else ");
+                Transpile(stmt.ElseBranch);
             }
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a print statement
+        /// Transpile a print statement
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
         public object Visit(Stmt.Print stmt)
         {
-            Resolve(stmt.Expression);
+            _code.Append("Console.WriteLine(");
+
+            Transpile(stmt.Expression);
+
+            _code.Append(");\n");
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a return statement
+        /// Transpile a return statement
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
@@ -167,27 +212,28 @@ namespace CsLox.Runtime
                     _error_handler.Error(stmt.Keyword, "Cannot return from an initializer.");
                 }
 
-                Resolve(stmt.Value);
+                Transpile(stmt.Value);
             }
             return null;
         }
 
         /// <summary>
-        /// Resolve a while statement
+        /// Transpile a while statement
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
         public object Visit(Stmt.While stmt)
         {
-
-            Resolve(stmt.Condition);
-            Resolve(stmt.Body);
+            _code.Append("while (");
+            Transpile(stmt.Condition);
+            _code.Append(")\n");
+            Transpile(stmt.Body);
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a continue statement
+        /// Transpile a continue statement
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
@@ -197,73 +243,74 @@ namespace CsLox.Runtime
         }
 
         /// <summary>
-        /// Resolve a break statement
+        /// Transpile a break statement
         /// </summary>
         /// <param name="stmt"></param>
         /// <returns></returns>
         public object Visit(Stmt.Break stmt)
         {
-            
+
             return null;
         }
 
         /// <summary>
-        /// Resolve a binary expression
+        /// Transpile a binary expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Binary expr)
         {
-            Resolve(expr.Left);
-            Resolve(expr.Right);
+            Transpile(expr.Left);
+            _code.Append($" {expr.Operator.Lexeme} ");
+            Transpile(expr.Right);
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a call expression
+        /// Transpile a call expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Call expr)
         {
-            Resolve(expr.Callee);
+            Transpile(expr.Callee);
 
             foreach (var kv in expr.Arguments)
             {
                 // Todo: We don't care about argument name here?
                 Expr arg = kv.Value;
-                Resolve(arg);
+                Transpile(arg);
             }
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a property get
+        /// Transpile a property get
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Get expr)
         {
-            Resolve(expr.Object);
+            Transpile(expr.Object);
             return null;
         }
 
         /// <summary>
-        /// Resolve a property set
+        /// Transpile a property set
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
         public object Visit(Expr.Set expr)
         {
-            Resolve(expr.Value);
-            Resolve(expr.Object);
+            Transpile(expr.Value);
+            Transpile(expr.Object);
             return null;
         }
 
         /// <summary>
-        /// Resolve a superclass access
+        /// Transpile a superclass access
         /// </summary>
         /// <param name="expr">The expression</param>
         public object Visit(Expr.Super expr)
@@ -279,59 +326,77 @@ namespace CsLox.Runtime
 
 
 
-            ResolveLocal(expr, expr.keyword);
+            TranspileLocal(expr, expr.keyword);
             return null;
         }
 
         /// <summary>
-        /// Resolve a grouping expression
+        /// Transpile a grouping expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Grouping expr)
         {
-            Resolve(expr.Expression);
+            _code.Append("(");
+            Transpile(expr.Expression);
+            _code.Append(")");
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a literal expression
+        /// Transpile a literal expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Literal expr)
         {
+            switch (expr.Value)
+            {
+                case string s:
+                    _code.Append($"\"");
+                    _code.Append(s);
+                    _code.Append($"\"");
+                    break;
+                case double d:
+                    _code.Append(d.ToString());
+                    break;
+                case bool b:
+                    _code.Append(b ? "true" : "false");
+                    break;
+
+            }
+
             return null;
         }
 
         /// <summary>
-        /// Resolve a logical expression
+        /// Transpile a logical expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Logical expr)
         {
-            Resolve(expr.Left);
-            Resolve(expr.Right);
+            Transpile(expr.Left);
+            Transpile(expr.Right);
 
             return null;
         }
 
         /// <summary>
-        /// Resolve an unary expression
+        /// Transpile an unary expression
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
         public object Visit(Expr.Unary expr)
         {
-            Resolve(expr.Right);
+            Transpile(expr.Right);
 
             return null;
         }
 
         /// <summary>
-        /// Resolve a class declaration
+        /// Transpile a class declaration
         /// </summary>
         /// <param name="stmt">The statement</param>
         /// <returns></returns>
@@ -347,7 +412,7 @@ namespace CsLox.Runtime
             if (stmt.Superclass != null)
             {
                 _current_class = ClassType.SUBCLASS;
-                Resolve(stmt.Superclass);
+                Transpile(stmt.Superclass);
 
                 // Create a new super class scope
                 BeginScope();
@@ -362,7 +427,7 @@ namespace CsLox.Runtime
             _scopes.Peek().Put("this", true);
 
             // Methods
-            foreach(Stmt.Function method in stmt.Methods)
+            foreach (Stmt.Function method in stmt.Methods)
             {
                 FunctionType declaration = FunctionType.METHOD;
 
@@ -372,7 +437,7 @@ namespace CsLox.Runtime
                     declaration = FunctionType.INITIALIZER;
                 }
 
-                ResolveFunction(method, declaration);
+                TranspileFunction(method, declaration);
             }
 
             EndScope();
@@ -389,7 +454,7 @@ namespace CsLox.Runtime
         }
 
         /// <summary>
-        /// Resolve this
+        /// Transpile this
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <returns></returns>
@@ -401,54 +466,65 @@ namespace CsLox.Runtime
                 _error_handler.Error(expr.Keyword, "Cannot use 'this' outside of a class.");
             }
 
-            ResolveLocal(expr, expr.Keyword);
+            TranspileLocal(expr, expr.Keyword);
             return null;
         }
 
 
         /// <summary>
-        /// Resolve scope for a list of statements
+        /// Transpile scope for a list of statements
         /// </summary>
         /// <param name="statements">The statements</param>
-        public void Resolve(IEnumerable<Stmt> statements)
+        public void Transpile(IEnumerable<Stmt> statements)
         {
             foreach (Stmt statement in statements)
             {
-                Resolve(statement);
+                Indent();
+                Transpile(statement);
             }
         }
 
         /// <summary>
-        /// Resolve the scope for a statement
+        /// Transpile the scope for a statement
         /// </summary>
         /// <param name="stmt">The statement</param>
-        private void Resolve(Stmt stmt)
+        private void Transpile(Stmt stmt)
         {
             stmt.Accept(this);
         }
 
+        private void Indent()
+        {
+            for (int i = 0; i < _indent; i++)
+            {
+                _code.Append("    ");
+            }
+        }
+
         /// <summary>
-        /// Resolve a expression
+        /// Transpile a expression
         /// </summary>
         /// <param name="expr">The expression</param>
-        private void Resolve(Expr expr)
+        private void Transpile(Expr expr)
         {
             expr.Accept(this);
         }
 
         /// <summary>
-        /// Resolve a local variable
+        /// Transpile a local variable
         /// </summary>
         /// <param name="expr">The expression</param>
         /// <param name="name">The name token</param>
-        private void ResolveLocal(Expr expr, Token name)
+        private void TranspileLocal(Expr expr, Token name)
         {
+            _code.Append(name.Lexeme);
+
             // Look down the stack
             for (int i = _scopes.Count() - 1; i >= 0; i--)
             {
                 if (_scopes[i].ContainsKey(name.Lexeme))
                 {
-                    _interpeter.Resolve(expr, _scopes.Count() - 1 - i);
+                    //_interpeter.Transpile(expr, _scopes.Count() - 1 - i);
                 }
             }
 
@@ -457,10 +533,10 @@ namespace CsLox.Runtime
 
 
         /// <summary>
-        /// Resolve a function, creating a scope and its parameters
+        /// Transpile a function, creating a scope and its parameters
         /// </summary>
         /// <param name="function">The function</param>
-        private void ResolveFunction(Stmt.Function function, FunctionType type)
+        private void TranspileFunction(Stmt.Function function, FunctionType type)
         {
             // Keep track of functions
             FunctionType enclosing_function = _current_function;
@@ -475,7 +551,7 @@ namespace CsLox.Runtime
 
             // Todo: Store current return type globally here and then copy it in return
 
-            Resolve(function.Body);
+            Transpile(function.Body);
             EndScope();
 
             _current_function = enclosing_function;

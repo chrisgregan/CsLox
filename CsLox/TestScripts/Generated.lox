@@ -1,0 +1,58 @@
+﻿// Idea: Make Celbridge language map ALL c# features
+
+// This is not a productive language!
+// Should be a *simple* language, more like a BASIC that maps to c# code
+
+// Simplifying decisions:
+// No access to all .NET APIs, types - must be wrapped. Include c# directly in a node type?
+// Some basic types are exposed - e.g. String, Number, Boolean, Enum, File? 
+// Access level is either private or public, private indicated by a leading _
+// Single namespace declaration per file - no end block
+// Using declarations must appear at top
+// Static using is encouraged to keep identifiers
+// Automatically add virtual / override based on inheritance info?
+
+
+Using                   System;
+Using                   System.Collections.Generic
+Namespace               CsLox.GeneratedCSharp
+
+    Class               Generated
+    ^ Scope             Internal
+
+        Number          count
+
+        Function        DoStuff
+        ^ AccessLevel   Internal
+        ^ Inheritance   Virtual
+        ^ Integer       a
+        ^ Integer       b
+        ^ ReturnType    Integer
+            Return      (a * b)
+        End
+    End
+
+    Class               Inherited
+    ^ Scope             Internal
+    ^ Parent            Generated
+        Function        DoStuff
+        ^ Scope         Internal
+        ^ Inheritance   Override
+        ^ Integer       a
+        ^ Integer       b
+        ^ ReturnType    Integer
+            Return      (a / b)
+        End
+
+        Function        MakeGenerated
+        ^ ReturnType    int
+            // Allow calling functions in expressions?
+            // Just encourage use of temporary locals instead?
+            Return      DoStuff(10,20) + 30
+
+            // Allow any expression that's valid c#? Rely on c# compiler error message
+            Number      a = "A string".Length()
+        End
+
+    End
+End

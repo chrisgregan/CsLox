@@ -18,7 +18,7 @@ namespace CsLox.Runtime.NativeFunctions
         /// <param name="interpreter">The interpreter</param>
         /// <param name="arguments">The arguments</param>
         /// <returns>The UNIX time</returns>
-        public object Call(Interpreter interpreter, IList<object> arguments)
+        public object Call(Interpreter interpreter, IDictionary<string, object> arguments)
         {
             return (double)((DateTime.UtcNow - _unix_epoch).TotalSeconds);
         }

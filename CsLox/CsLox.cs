@@ -87,6 +87,12 @@ namespace CsLox
 
             if (_error_handler.SyntaxError) return;
 
+
+            Transpiler transpiler = new Transpiler(_error_handler);
+            transpiler.Transpile(statements);
+            Console.WriteLine(transpiler.GetCode());
+
+
             Resolver resolver = new Resolver(_interpreter, _error_handler);
             resolver.Resolve(statements);
 

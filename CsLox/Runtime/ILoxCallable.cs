@@ -9,6 +9,6 @@ namespace CsLox.Runtime
     interface ILoxCallable
     {
         int Arity { get; }
-        object Call(Interpreter interpreter, IList<object> arguments);
+        object Call(Interpreter interpreter, IDictionary<string, object> arguments);
     }
 }

@@ -202,10 +202,13 @@ namespace CsLox.Runtime
         {
             object callee = Evaluate(expr.Callee);
 
-            List<object> arguments = new List<object>();
-            foreach (Expr arg in expr.Arguments)
+            Dictionary<string, object> arguments = new Dictionary<string, object>();
+            foreach (var kv in expr.Arguments)
             {
-                arguments.Add(Evaluate(arg));
+                string argName = kv.Key.Lexeme;
+                Expr argExpr = kv.Value;
+
+                arguments.Add(argName, Evaluate(argExpr));
             }
 
             // Make sure we the callee is actually callable

@@ -114,7 +114,8 @@ namespace CsLox.Parsing
             // Parameters
             Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
             List<Token> parameters = new List<Token>();
-            List<VarType> parameterTypes = new List<VarType>();
+            List<Token> parameterTypes = new List<Token>();
+            Token returnType = null;
             if (!Check(TokenType.RIGHT_PAREN))
             {
                 do
@@ -126,29 +127,27 @@ namespace CsLox.Parsing
 
                     if (Match(TokenType.NUMBER_TYPE, TokenType.STRING_TYPE, TokenType.BOOLEAN_TYPE))
                     {
-                        if (!Enum.TryParse(Previous().Lexeme, out VarType varType))
-                        {
-                            Error(Previous(), "Expect 'Number', 'String' or 'Boolean' before parameter name.");
-                        }
-                        parameterTypes.Add(varType);
+                        parameterTypes.Add(Previous());
                     }
-                    else
-                    {
-                        Error(Peek(), "Expect 'Number', 'String' or 'Boolean' before parameter name.");
-                    }
-
                     parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
                 }
                 while (Match(TokenType.COMMA));
             }
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
 
+            if (Match(TokenType.COLON))
+            {
+                if (Match(TokenType.NUMBER_TYPE, TokenType.STRING_TYPE, TokenType.BOOLEAN_TYPE))
+                {
+                    returnType = Previous();
+                }
+            }
+
             // Body
             // Consume(TokenType.BEGIN, $"Expect 'Begin' before {kind} body.");
             List<Stmt> body = Block();
 
-            return new Stmt.Function(name, parameters, parameterTypes, body);
-
+            return new Stmt.Function(name, parameterTypes, parameters, returnType, body);
         }
 
         /// <summary>
@@ -598,7 +597,7 @@ namespace CsLox.Parsing
         /// <returns>The expression</returns>
         private Expr FinishCall(Expr callee)
         {
-            List<Expr> arguments = new List<Expr>();
+            Dictionary<Token, Expr> arguments = new Dictionary<Token, Expr>();
 
             // Find any arguments
             if (!Check(TokenType.RIGHT_PAREN))
@@ -610,7 +609,11 @@ namespace CsLox.Parsing
                         Error(Peek(), "Cannot have more than 8 arguments");
                     }
 
-                    arguments.Add(Expression());
+                    var argumentName = Consume(TokenType.IDENTIFIER, "Expect argument name");
+                    Consume(TokenType.COLON, "Expect ':' after argument name");
+
+                    // Todo: Handle name conflicts
+                    arguments.Add(argumentName, Expression());
                 }
                 while (Match(TokenType.COMMA));
             }

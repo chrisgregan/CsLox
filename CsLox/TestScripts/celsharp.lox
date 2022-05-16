@@ -1,0 +1,54 @@
+﻿// Idea: use c# as serialization format for Celbridge script 
+// Celbridge provides a simple, easy to read 2 column format, which translates
+// line by line to how the script is display in the editor. 
+
+
+Class               MyClass
+    Number          a
+
+    Function        MyClass
+    ^ Number        a
+        Set         this.a = a
+    End
+
+    Function        Multiply
+    ^ Number        b
+    ^ ReturnType    Number
+        Return      (this.a * b)
+    End
+End
+
+MyClass             instance
+= New               MyClass           
+^ a                 2
+
+Number              result
+= Call              instance.Multiply
+^ b                 6
+
+///////////
+
+// c# code doesn't map to a 2 column format at all
+// Could interpret it as a two column UI, but not clear how to resolve complex nesting
+// Easy to make changes to c# code that look valid but can't be interpreted by our parser
+
+public class MyClass
+{
+    public double   a;
+    public          MyClass
+    (
+        double      a
+    )
+    {
+        this.a      = a;
+    }
+
+    public double Multiply(double b)
+    {
+        return (this.a * b);
+    }
+}
+
+MyClass instance = new MyClass(a:2);
+double result
+= instance.Multiply(6);
