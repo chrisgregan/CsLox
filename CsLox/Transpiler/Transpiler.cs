@@ -275,13 +275,26 @@ namespace CsLox.Runtime
         public object Visit(Expr.Call expr)
         {
             Transpile(expr.Callee);
+            _code.Append("(");
 
+            bool first = true;
             foreach (var kv in expr.Arguments)
             {
-                // Todo: We don't care about argument name here?
+                if (!first)
+                {
+                    _code.Append(", ");
+                }
+
                 Expr arg = kv.Value;
+                var argName = kv.Key;
+                _code.Append($"{argName.Lexeme}:");
                 Transpile(arg);
+
+                first = false;
             }
+
+            // Todo: What if there's another statement to the right?
+            _code.Append(");\n");
 
             return null;
         }

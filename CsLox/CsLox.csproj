@@ -50,8 +50,7 @@
     <Compile Include="ErrorHandlers\IErrorHandler.cs" />
     <Compile Include="Exceptions\BreakException.cs" />
     <Compile Include="Exceptions\ContinueException.cs" />
-    <None Include="GeneratedCSharp\Generated.lox" />
-    <Compile Include="GeneratedCSharp\Generated.cs" />
+    <None Include="TestScripts\Generated.lox" />
     <Compile Include="Runtime\LoxClass.cs" />
     <Compile Include="Runtime\LoxEnvironment.cs" />
     <Compile Include="Exceptions\ReturnException.cs" />
